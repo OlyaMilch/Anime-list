@@ -13,4 +13,13 @@ app.config['SECRET_KEY'] = os.urandom(24).hex()  # Generate random secret key
 
 db = SQLAlchemy(app)  # Binding SQLAlchemy to an application
 
+# Contents inside db
+class Anime(db.Model):
+    id = db.Column(db.Integer, unque=True, primary_key=True)
+    title = db.Column(db.String(100), unique=True, nullable=False)
+    genre = db.Column(db.String(50), nullable=False)
+    mal_id = db.Column(db.Integer, unique=True, nullable=True)  # Id for using anime parser
+    description = db.Column(db.Text, nullable=True)
+    rating = db.Column(db.Float, nullable=True)
 
+# Home page (shows task list)

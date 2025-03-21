@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, url_for, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 import os
 
@@ -22,4 +22,29 @@ class Anime(db.Model):
     description = db.Column(db.Text, nullable=True)
     rating = db.Column(db.Float, nullable=True)
 
-# Home page (shows task list)
+# Home page (shows anime list)
+@app.route('/all')
+def index():
+    anime = Anime.query.all()  # Get all anime
+    return render_template('index.html', anime=anime)  # Здесь надо написать html
+
+# Add anime page
+@app.route('/add', methods=['GET', 'POST'])
+def add_anime():
+    if request.method == 'POST':
+        title=request.form['title']
+        new_anime = Anime(title=title)
+        db.session.add(new_anime)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('add_anime.html')  # добавить html
+
+# Anime edit page
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit_anime(id):
+    anime = Anime.query.get(id)
+    if request.method == 'POST':
+        anime.title = request.form['title']
+        db.session.commit()
+        return redirect(url_for('index'))
+

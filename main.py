@@ -46,5 +46,18 @@ def edit_anime(id):
     if request.method == 'POST':
         anime.title = request.form['title']
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('index'))  # Redirects the user to the home page
 
+# Delete anime
+@app.route('/delete/<int:id>')
+def delete_anime(id):
+    anime = Anime.query.get_or_404(id)
+    db.session.delete(anime)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+# Launching the application
+if __name__ == '__main__':
+    with app.app_context():  # Needed for db to work
+        db.create_all()  # Create db if it doesn't exist
+    app.run(debug=True)

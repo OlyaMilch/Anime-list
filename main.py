@@ -50,6 +50,8 @@ def edit_anime(id):
         db.session.commit()
         return redirect(url_for('index'))  # Redirects the user to the home page
 
+    return render_template('edit.html', anime=anime)
+
 # Delete anime
 @app.route('/delete/<int:id>')
 def delete_anime(id):

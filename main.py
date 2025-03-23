@@ -22,24 +22,28 @@ class Anime(db.Model):
     mal_id = db.Column(db.Integer, unique=True, nullable=True)  # id for using anime parser
     description = db.Column(db.Text, nullable=True)
     rating = db.Column(db.Float, nullable=True)
-    poster_url = db.Column(db.String(255), nullable=True)
 
 # Home page (shows anime list)
 @app.route('/all')
 def index():
     anime = Anime.query.all()  # Get all anime
-    return render_template('index.html', anime=anime)  # Здесь надо написать html
+    return render_template('index.html', anime=anime)
 
 # Add anime page
 @app.route('/add', methods=['GET', 'POST'])
 def add_anime():
     if request.method == 'POST':
         title=request.form['title']
+        year=request.form['year']
+        genre=request.form['genre']
+        rating=request.form['rating']
+        description=request.form['description']
         new_anime = Anime(title=title)
         db.session.add(new_anime)
         db.session.commit()
         return redirect(url_for('index'))
-    return render_template('add_anime.html')  # добавить html
+
+    return render_template('add_anime.html')
 
 # Anime edit page
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])

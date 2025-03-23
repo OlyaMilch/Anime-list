@@ -15,12 +15,14 @@ db = SQLAlchemy(app)  # Binding SQLAlchemy to an application
 
 # Contents inside db
 class Anime(db.Model):
-    id = db.Column(db.Integer, unque=True, primary_key=True)
+    id = db.Column(db.Integer, unique=True, primary_key=True)
     title = db.Column(db.String(100), unique=True, nullable=False)
     genre = db.Column(db.String(50), nullable=False)
-    mal_id = db.Column(db.Integer, unique=True, nullable=True)  # Id for using anime parser
+    year = db.Column(db.Integer, nullable=False)
+    mal_id = db.Column(db.Integer, unique=True, nullable=True)  # id for using anime parser
     description = db.Column(db.Text, nullable=True)
     rating = db.Column(db.Float, nullable=True)
+    poster_url = db.Column(db.String(255), nullable=True)
 
 # Home page (shows anime list)
 @app.route('/all')

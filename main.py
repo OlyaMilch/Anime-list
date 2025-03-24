@@ -18,7 +18,7 @@ class Anime(db.Model):
     id = db.Column(db.Integer, unique=True, primary_key=True)
     title = db.Column(db.String(100), unique=True, nullable=False)
     genre = db.Column(db.String(50), nullable=False)
-    year = db.Column(db.Integer, nullable=False)
+    year = db.Column(db.Integer, nullable=True)
     mal_id = db.Column(db.Integer, unique=True, nullable=True)  # id for using anime parser
     description = db.Column(db.Text, nullable=True)
     rating = db.Column(db.Float, nullable=True)
@@ -33,12 +33,15 @@ def index():
 @app.route('/add', methods=['GET', 'POST'])
 def add_anime():
     if request.method == 'POST':
-        title=request.form['title']
-        year=request.form['year']
-        genre=request.form['genre']
-        rating=request.form['rating']
-        description=request.form['description']
-        new_anime = Anime(title=title)
+        print(request.form)
+        title=request.form.get('title')
+        genre=request.form.get('genre')
+        year=request.form.get('year', type=int)
+        mal_id = int(request.form['mal_id'])
+        description=request.form.get('description', '').strip()
+        rating=request.form.get('rating', type=float)
+        new_anime = Anime(title=title, genre=genre, year=year,
+                           mal_id=mal_id, description=description, rating=rating)
         db.session.add(new_anime)
         db.session.commit()
         return redirect(url_for('index'))

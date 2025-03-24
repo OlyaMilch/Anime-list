@@ -32,9 +32,19 @@ def update_anime_info():
             info_panel = soup.find('span', string="Aired:")
             if info_panel:
                 year_text = info_panel.find_next_sibling(string=True).strip()
-                year = int(year_text.split()[-1]) if year_text else None
+
+                # Проверяем, есть ли текст и не является ли он знаком вопроса
+                if year_text and year_text.strip() != "?":
+                    try:
+                        year = int(year_text.split()[-1])  # Берём последнее слово (год)
+                    except ValueError:
+                        year = None  # Если всё же ошибка - ставим None
+                else:
+                    year = None
             else:
                 year = None
+            print(f"Парсим аниме: {anime.title}")
+            print(f"Год: {year}, Жанры: {genres}, Рейтинг: {rating}, Описание: {description}")
 
             # Обновляем базу
             anime.description = description

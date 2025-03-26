@@ -31,7 +31,7 @@ def index():
 
 # Add anime page
 @app.route('/add', methods=['GET', 'POST'])
-def add_anime():
+def add_new_anime():
     if request.method == 'POST':
         print(request.form)
         title=request.form.get('title')

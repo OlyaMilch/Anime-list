@@ -6,12 +6,12 @@
 </head>
 <body>
     <h1>⭐Anime list⭐</h1>
-    <a href="{{ url_for('add_anime') }}">➕ Add anime</a>
+    <a href="{{ url_for('add_new_anime') }}">➕ Add anime</a>
     <ul>
-        {% for movie in anime %}
+        {% for movie in anime %}  <!-- присмотреться -->
         <li>
-            <strong>{{ movie.title }}</strong> ({{ movie.year }}) ⭐{{ movie.rating }}
-            <p>{{ movie.review }}</p>
+            <strong>{{ movie.title }}</strong> ({{ movie.year }}) {{ movie.genre }}⭐{{ movie.rating }}
+            <p>{{ movie.description }}</p>
             {% if movie.poster_url %}
                 <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" width="100">
             {% endif %}

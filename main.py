@@ -1,6 +1,7 @@
-from flask import Flask, redirect, url_for, request, render_template, jsonify, requests
+from flask import Flask, redirect, url_for, request, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from bs4 import BeautifulSoup
+import requests
 import os
 
 
@@ -87,17 +88,21 @@ def add_anime():
     data = request.get_json()
     print("Received data:", data)
 
-    mal_id = data.get('mal_id')
-    if not mal_id:
+    if not data or 'mal_id' not in data:
+        print("Ошибка: mal_id не передан")
         return jsonify({'error': 'mal_id is required'}), 400
+
+    mal_id = data['mal_id']
 
     existing_anime = Anime.query.filter_by(mal_id=mal_id).first()
     if existing_anime:
+        print('anime в базе уже')
         return jsonify({'message': 'Anime already exists in the database'}), 200
 
     mal_url = f"https://myanimelist.net/anime/{mal_id}"
     response = requests.get(mal_url, headers={"User-Agent": "Mozilla/5.0"})
     if response.status_code != 200:
+        print('ошибка в запросе Mal')
         return jsonify({'error': 'Failed to fetch data from MyAnimeList'}), 500
 
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -133,9 +138,12 @@ def add_anime():
         year=year
     )
 
-    db.session.add(new_anime)
-    db.session.commit()
-
+    try:
+        db.session.add(new_anime)
+        db.session.commit()
+        print('аниме добавлено успешно')
+    except Exception as e:
+        print("❌ Ошибка базы данных:", e)
     return jsonify({'message': 'Anime successfully added!', 'anime': {'title': title, 'mal_id': mal_id}}), 201
 
 

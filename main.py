@@ -31,7 +31,7 @@ def index():
     anime = Anime.query.all()  # Get all anime
     return render_template('index.html', anime=anime)
 
-# Add anime page
+# Add anime page. Without this the main page will not work
 @app.route('/add', methods=['GET', 'POST'])
 def add_new_anime():
     if request.method == 'POST':
@@ -50,21 +50,11 @@ def add_new_anime():
 
     return render_template('add_anime.html')
 
-# Anime edit page
-@app.route('/edit/<int:id>', methods=['GET', 'POST'])
-def edit_anime(id):
-    anime = Anime.query.get(id)
-    if request.method == 'POST':
-        anime.title = request.form['title']
-        db.session.commit()
-        return redirect(url_for('index'))  # Redirects the user to the home page
-
-    return render_template('edit.html', anime=anime)
 
 # Delete anime
-@app.route('/delete/<int:id>')
-def delete_anime(id):
-    anime = Anime.query.get_or_404(id)
+@app.route('/delete/<int:mal_id>')
+def delete_anime(mal_id):
+    anime = Anime.query.get_or_404(mal_id)
     db.session.delete(anime)
     db.session.commit()
     return redirect(url_for('index'))

@@ -67,6 +67,11 @@ def delete_anime(id):
     db.session.commit()
     return redirect(url_for('index'))
 
+# We enter mal_id, the parser supplements information on anime from the site using it
+@app.route('/add_anime_form')
+def add_anime_form():
+    return render_template('add_anime_form.html')
+
 # Launching the application
 if __name__ == '__main__':
     with app.app_context():  # Needed for db to work

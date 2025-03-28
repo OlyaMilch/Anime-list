@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить аниме</title>
+    <script>
+        async function addAnime(event) {
+            event.preventDefault();
+            const malId = document.getElementById("mal_id").value;
+
+            if (!malId) {
+                alert("Введите MAL ID!");
+                return;
+            }
+
+            const response = await fetch("/add_anime", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ mal_id: malId })
+            });
+
+            const data = await response.json();
+            alert(data.message || "Ошибка при добавлении аниме!");
+        }
+    </script>
+</head>
+<body>
+    <h2>Добавить аниме по MAL ID</h2>
+    <form onsubmit="addAnime(event)">
+        <label for="mal_id">Введите MAL ID:</label>
+        <input type="number" id="mal_id" required>
+        <button type="submit">Добавить</button>
+    </form>
+</body>
+</html>

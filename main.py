@@ -69,40 +69,26 @@ def delete_anime(id):
     db.session.commit()
     return redirect(url_for('index'))
 
-# # We enter mal_id, the parser supplements information on anime from the site using it
-# @app.route('/add_anime', methods=['GET', 'POST'])
-# def add_anime_form():
-#     if request.method == 'POST':
-#         from add_anime import add_anime  # Импортируем обработчик POST-запроса
-#         return add_anime()  # Вызываем его
-#     return render_template('add_anime_form.html')
-
-
 @app.route('/add_anime_form')
 def add_anime_form():
     return render_template('add_anime_form.html')
 
-
 @app.route('/add_anime', methods=['POST'])
 def add_anime():
     data = request.get_json()
-    print("Received data:", data)
 
     if not data or 'mal_id' not in data:
-        print("Ошибка: mal_id не передан")
         return jsonify({'error': 'mal_id is required'}), 400
 
     mal_id = data['mal_id']
 
     existing_anime = Anime.query.filter_by(mal_id=mal_id).first()
     if existing_anime:
-        print('anime в базе уже')
         return jsonify({'message': 'Anime already exists in the database'}), 200
 
     mal_url = f"https://myanimelist.net/anime/{mal_id}"
     response = requests.get(mal_url, headers={"User-Agent": "Mozilla/5.0"})
     if response.status_code != 200:
-        print('ошибка в запросе Mal')
         return jsonify({'error': 'Failed to fetch data from MyAnimeList'}), 500
 
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -141,9 +127,9 @@ def add_anime():
     try:
         db.session.add(new_anime)
         db.session.commit()
-        print('аниме добавлено успешно')
+        print('Anime added successfully')
     except Exception as e:
-        print("❌ Ошибка базы данных:", e)
+        print("Database Error", e)
     return jsonify({'message': 'Anime successfully added!', 'anime': {'title': title, 'mal_id': mal_id}}), 201
 
 

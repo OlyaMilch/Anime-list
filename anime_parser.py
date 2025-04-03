@@ -2,23 +2,25 @@ import requests
 from bs4 import BeautifulSoup
 from main import db, Anime, app
 
+
 def update_anime_info():
     with app.app_context():
         animes = Anime.query.filter(Anime.mal_id.isnot(None)).all()  # Берём все аниме с MAL ID
-        print(f"Найдено аниме для обновления: {len(animes)}")
+        print(f"Anime found for updates: {len(animes)}")
         for anime in animes:
             mal_url = f"https://myanimelist.net/anime/{anime.mal_id}"  # Формируем ссылку
 
             response = requests.get(mal_url, headers={"User-Agent": "Mozilla/5.0"})
+            print(f"Fetching {mal_url}, Status Code: {response.status_code}")  #  Checks if there is an error on the site itself
             if response.status_code != 200:
-                print(f"Ошибка загрузки {anime.title}")
+                print(f"Loading error {anime.title}")
                 continue
 
             soup = BeautifulSoup(response.text, 'html.parser')
 
             # Получаем описание (оно находится в теге <p> внутри блока с классом 'description')
             description_tag = soup.find('p', attrs={'itemprop': 'description'})
-            description = description_tag.text.strip() if description_tag else "Нет описания"
+            description = description_tag.text.strip() if description_tag else "No description"
 
             # Получаем рейтинг (он находится в теге <div> с классом 'score-label')
             rating_tag = soup.find('div', class_='score-label')
@@ -26,7 +28,7 @@ def update_anime_info():
 
             # Получаем жанры (они в <span> внутри <div> с itemprop='genre')
             genre_tags = soup.find_all('span', attrs={'itemprop': 'genre'})
-            genres = ', '.join([genre.text for genre in genre_tags]) if genre_tags else "Неизвестно"
+            genres = ', '.join([genre.text for genre in genre_tags]) if genre_tags else "Unknown"
 
             # Получаем год (он в <span> внутри блока с информацией)
             info_panel = soup.find('span', string="Aired:")
@@ -43,8 +45,8 @@ def update_anime_info():
                     year = None
             else:
                 year = None
-            print(f"Парсим аниме: {anime.title}")
-            print(f"Год: {year}, Жанры: {genres}, Рейтинг: {rating}, Описание: {description}")
+            print(f"Parsim anime: {anime.title}")
+            print(f"Year: {year}, Genre: {genres}, Rating: {rating}, Description: {description}")
 
             # Обновляем базу
             anime.description = description
@@ -53,7 +55,7 @@ def update_anime_info():
             anime.year = year
 
             db.session.commit()
-            print(f"Обновлено: {anime.title} ({rating})")
+            print(f"Updated: {anime.title} ({rating})")
 
 # Запускаем обновление
 if __name__ == '__main__':

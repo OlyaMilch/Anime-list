@@ -1,14 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 def fetch_anime_data(mal_id):
-    """Запрашивает данные с MyAnimeList и парсит нужную информацию."""
+
+    # Requests data from MyAnimeList and parses the required information
     mal_url = f"https://myanimelist.net/anime/{mal_id}"
     response = requests.get(mal_url, headers={"User-Agent": "Mozilla/5.0"})
 
     if response.status_code != 200:
         print(f"Loading error for MAL ID {mal_id}")
-        return None  # Возвращаем None, если ошибка
+        return None  # Return None if there is an error
 
     soup = BeautifulSoup(response.text, 'html.parser')
 

@@ -8,7 +8,7 @@
     <h1>⭐Anime list⭐</h1>
     <a href="{{ url_for('add_new_anime') }}">➕ Add anime</a>
     <ul>
-        {% for movie in anime %}  <!-- присмотреться -->
+        {% for movie in anime %}
         <li>
             <strong>{{ movie.title }}</strong> ({{ movie.year }}) {{ movie.genre }}⭐{{ movie.rating }}
             <p>{{ movie.description }}</p>
@@ -20,3 +20,4 @@
     </ul>
 </body>
 </html>
+
